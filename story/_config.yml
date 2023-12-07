@@ -33,7 +33,7 @@ url: https://ezzeldinismail.github.io
 baseurl: /CSCD25Proj/story
 
 # Build settings
-theme: minima
+# theme: minima
 plugins:
   - jekyll-feed
 
