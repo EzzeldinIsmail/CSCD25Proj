@@ -1,0 +1,182 @@
+---
+layout: default
+title: Home
+---
+
+<style>
+     table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding: .5rem;
+}
+</style>
+
+<div class="flex flex-col items-center justify-center w-screen m-0" >
+    <div class="flex flex-col items-center justify-center mx-32 text-center">
+
+        <h1 class="text-7xl">Comparative analysis of Reddit communities' media consumption and bias</h1>
+    </div>
+
+    <div style="background-color: #ffd09b;" class="w-full">
+
+        <div class="mx-32 my-10">
+            <h2 class="text-5xl">Introduction</h2>
+            <p class="text-xl">
+                In the recept paper <a href="https://ojs.aaai.org/index.php/ICWSM/article/view/22177/21956">'Echo Tunnels: Polarized News Sharing Online Runs 
+                Narrow but Deep'</a>, an analysis was done on how echo chambers on Reddit and 
+                how common they are across the 10K most active subreddits. This analysis concluded that echo chambers are not actually a common phenomenon 
+                which intuitively makes sense since most subreddits are not political in nature. What was discovered instead was that echo chambers tend to be
+                extremely strong in hyper-partisan communities e.g. r/Conservatives, r/democrats.
+            </p>
+            <p class="text-xl">
+                This analysis was conducted using a <a href="https://www.nature.com/articles/s41586-021-04167-x">community embedding</a> that provides granular
+                characterizations of each subreddits political leanings based on a modified version of word2vec. However, due to Reddit's inherent 
+                <a href="https://www.pewresearch.org/short-reads/2021/04/07/partisan-differences-in-social-media-use-show-up-for-some-platforms-but-not-facebook/">
+                    left leaning
+                bias</a>, this results in much larger values (in absolute terms) for conservative subreddits than progressive subreddits. Later in the analysis, the 
+                news sites that were shared in each subreddit were analyzed and given a score based on which subreddits they were shared in and how much. Because
+                Conservative subreddits were given larger values that made them appear more 'extremist' than their progressive counterparts, this resulted in some
+                exclusively conservative news organizations such as the daily wire appearing far more right wing than any exclusively left-wing news organizations 
+                such as mother jones. 
+            </p>
+            <p class="text-xl">
+                My analysis will be similar to the paper, but will be focused on comparing news consumption across the political axis and what that tells us about
+                the communities and the news sources analyzed.
+                
+            </p>
+
+            <h2 class="text-5xl">Methodology</h2>
+            <h3 class="text-4xl">Community embedding</h2>
+            <p class="text-xl">
+                Each subreddits partisan score was retrieved using the community embedding, where each subreddit was given a score based on how close it was to the 
+                seed subreddits (r/Conservative, r/democrats). Due to Reddit's left-leaning nature, two different normalization techniques where used. The first scaled
+                the normal distribution linearly so that the highest and lowest value points where at 1 and -1 respectively. This maintained the normal distribution
+                shape while giving an equal comparison between the most left wing and the most right wing subreddits. This method also moved the mean from right 
+                leaning to left leaning, unearthing how certain left-leaning communities were marked as more right leaning due to the biased mean of subreddits being
+                left-leaning. The second method split the communities based on their leanings, and then scaled each individually from -1 to 0 and 0 to 1 respectively.
+                This maintained the same number of 
+                left and right leaning subreddits as the original values but deformed the shape of the curve as the left-leaning communities were scaled more 
+                due to their initial low values. This resulted in a higher number of left leaning communities who were more than 3 standard deviations from the
+                mean and less right leaning distributions more than 3 standard deviations from the mean, the areas that would be considered 'extremist'.
+                <div class="flex items-center justify-center">
+                    <img class="" src="/images/Community embedding.png"/>
+                </div>
+                <div class="flex items-center justify-center">
+                    <img class="" src="/images/Evenly scaled.png"/>
+                </div>
+                <div class="flex items-center justify-center">
+                    <img class="" src="/images/Split then scaled.png"/>
+                </div>
+            </p>
+            <h3 class="text-4xl">News rating</h2>
+            <p class="text-xl">
+                For each news organization, a bias rating was retrieved using AllSides, an independent organization that measures the bias of news sources. 
+                However, from the sources selected for research more were left leaning than right leaning. Therefore, a secondary score was calculated which
+                scaled all the bias ratings to be between -1 and 1 similar to above. This is to reduces the mislabeling of subreddits as left-leaning when they
+                could have an even distribution of news from all sources.
+            </p>
+            <h3 class="text-4xl">Partisanship Scores</h2>
+                <p class="text-xl">
+                    For each subreddit, an Allsides score was derived as an average of the scores derived from links shared in the subreddit. So each link shared
+                    from a news source would have corresponding Allsides rating, and an average was taken over all these scores. This was similarly done for
+                    the scaled Allsides ratings.
+                </p>
+                <p class="text-xl">
+                    For each news source, a partisan rating would be derived as an average of the scores derived from the subreddits that were sharing links from 
+                    the news source. This was similarly done for the scaled normalized values for the subreddits, but not for the scores that were split and 
+                    scaled separately due to their unbalanced nature that labeled way too many left-leaning subreddits as far-left.
+                </p>
+
+            <h2 class="text-5xl">Results</h2>
+            <h3 class="text-4xl">News scores</h2>
+            <p class="text-xl">
+                Although the overall distribution of the scores were the same between the original and scaled values, the magnitude of the differences between
+                left leaning and right leaning sources decreased. For example, with the original partisan subreddit values, Fox News was considered almost 6x
+                as partisan as CNN. However, after the scaling CNN was considered 15% more partisan. While exclusively right-leaning organization still had much
+                larger values than the other news organizations, mainstream right leaning news organizations like the washington times, were now closer to their 
+                left-leaning counterparts like NPR. 
+            </p>
+            <div class="flex items-center justify-center">
+                <img class="" src="/images/News ratings.png"/>
+            </div>
+            <h3 class="text-4xl">Subreddit Scores</h2>
+                <p class="text-xl">
+                    There was a considerable difference between the distributions of the subreddit scores from the Allsides rating and the scaled rating. The 
+                    Allsides rating classified more subreddits as center (withing one standard deviation) and many less as left of center (56 vs 127). It also
+                    classified less no left-leaning subreddit as far-left (>3 standard deviation to the left). It also classified less subreddits as right-leaning
+                    but many more as right (41 vs 20) and far-right (16 vs 3). The scaled score gave a more even distribution across the spectrum with similar 
+                    values for opposite partisan leanings.
+                </p>
+                <div class="flex items-center justify-center">
+                    <table class=>
+                        <thead>
+                          <tr>
+                            <th></th>
+                            <th>Original</th>
+                            <th>Scaled</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Far-left<br></td>
+                            <td>0</td>
+                            <td>4</td>
+                          </tr>
+                          <tr>
+                            <td>Left</td>
+                            <td>14</td>
+                            <td>25</td>
+                          </tr>
+                          <tr>
+                            <td>Left-leaning</td>
+                            <td>42</td>
+                            <td>98</td>
+                          </tr>
+                          <tr>
+                            <td>Center</td>
+                            <td>798</td>
+                            <td>693</td>
+                          </tr>
+                          <tr>
+                            <td>Right-leaning</td>
+                            <td>44</td>
+                            <td>103</td>
+                          </tr>
+                          <tr>
+                            <td>Right</td>
+                            <td>41</td>
+                            <td>20</td>
+                          </tr>
+                          <tr>
+                            <td>Far-right</td>
+                            <td>16</td>
+                            <td>3</td>
+                          </tr>
+                        </tbody>
+                        </table>
+                    <div class="mx-2">
+                        <div class="flex items-center justify-center">
+                            <img class="" src="/images/Allsides ratings.png"/>
+                        </div>
+                        <div class="flex items-center justify-center">
+                            <img class="" src="/images/Scaled ratings.png"/>
+                        </div>
+                    </div>
+                </div>
+            <h2 class="text-5xl">Conclusion</h2>
+            <p>
+                In conclusion, Reddit's left leaning bias has caused a miscalibration in the models that cause them to classify right leaning news as further right
+                than anticipated. When comparing both left and right leaning subreddits equally, we see that while there are undoubtedly many extremely right wing 
+                news organizations that have no comparison in the left like Newsmax, The Daily Wire, and The blaze, there is a varied distribution around the center. 
+            </p>
+            <p>
+                The news bias rating has a high corelation with the subreddits embedding score with r2=.8. However, the subreddits media bias rating is not so 
+                strongly correlated with r2=.03.
+            </p>
+            <div class="flex items-center justify-center">
+                <img class="" src="/images/Comparison of News Bias ratings.png"/>
+                <img class="" src="/images/Comparison of Subreddit bias ratings.png"/>
+            </div>
+        </div>
+    </div>
+</div>

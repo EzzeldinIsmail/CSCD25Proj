@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>{{ page.title }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+        corePlugins: {
+            preflight: false,
+        }
+    }
+    </script>
+  </head>
+  <body class="m-0">
+      {{ content }}
+  </body>
+</html>
